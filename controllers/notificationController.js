@@ -30,7 +30,7 @@ const user_id = req.params.user_id
 
 const sql = `
 SELECT *
-FROM Notification
+FROM notification
 WHERE user_id=?
 ORDER BY created_at DESC
 `
@@ -76,7 +76,7 @@ exports.getProviderNotifications = (req, res) => {
 
   const sql = `
 SELECT *
-FROM Notification
+FROM notification
 WHERE provider_id = ?
 ORDER BY created_at DESC
 `
