@@ -170,7 +170,7 @@ WHERE slot_id=? AND capacity_available <= 0
                     // GET USER PHONE THEN NOTIFY USER
                     const getUserPhone = `
 SELECT u.phone, u.full_name, a.title
-FROM User u
+FROM user u
 JOIN activity a ON a.activity_id = ?
 WHERE u.user_id = ?
 `

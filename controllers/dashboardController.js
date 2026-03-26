@@ -6,7 +6,7 @@ ADMIN DASHBOARD
 
 exports.adminStats = async (req, res) => {
   try {
-    const [[usersRow]] = await db.promise().query(`SELECT COUNT(*) AS total_users FROM User`);
+    const [[usersRow]] = await db.promise().query(`SELECT COUNT(*) AS total_users FROM user`);
     const [[providersRow]] = await db.promise().query(`SELECT COUNT(*) AS total_providers FROM provider WHERE verification_status='Approved'`);
     const [[activitiesRow]] = await db.promise().query(`SELECT COUNT(*) AS total_activities FROM activity WHERE status='Active'`);
     const [[bookingsRow]] = await db.promise().query(`SELECT COUNT(*) AS total_bookings FROM booking`);

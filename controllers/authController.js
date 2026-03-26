@@ -34,7 +34,7 @@ exports.registerUser = async (req, res) => {
   try {
     const existingUser = await new Promise((resolve, reject) => {
       db.query(
-        "SELECT user_id, full_name, email, phone, image_url, password_hash FROM User WHERE email=? LIMIT 1",
+        "SELECT user_id, full_name, email, phone, image_url, password_hash FROM user WHERE email=? LIMIT 1",
         [email],
         (err, result) => {
           if (err) {
@@ -135,7 +135,7 @@ exports.loginUser = (req, res) => {
   }
 
   db.query(
-    "SELECT * FROM User WHERE email=? LIMIT 1",
+    "SELECT * FROM user WHERE email=? LIMIT 1",
     [email],
     async (err, result) => {
       if (err) {
@@ -187,7 +187,7 @@ exports.changeUserPassword = async (req, res) => {
   if (!current_password || !new_password) {
     return res.status(400).json({ success: false, message: "Both passwords are required." });
   }
-  db.query("SELECT password_hash FROM User WHERE user_id=?", [user_id], async (err, rows) => {
+  db.query("SELECT password_hash FROM user WHERE user_id=?", [user_id], async (err, rows) => {
     if (err || !rows.length) return res.status(404).json({ success: false, message: "User not found" });
     const match = await bcrypt.compare(current_password, rows[0].password_hash);
     if (!match) return res.status(401).json({ success: false, message: "Current password is incorrect" });
