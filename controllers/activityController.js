@@ -81,7 +81,7 @@ exports.updateActivity = (req, res) => {
   const { title, description, price_per_person, max_participants, duration_minutes, image_url, category_id, location_id } = req.body
 
   const sql = `
-    UPDATE activity
+    UPDATE Activity
     SET title=?, description=?, price_per_person=?, max_participants=?,
         duration_minutes=?, image_url=COALESCE(NULLIF(?, ''), image_url),
         category_id=COALESCE(?, category_id), location_id=COALESCE(?, location_id)
@@ -109,7 +109,7 @@ WHERE activity_id = ? AND booking_status IN ('Pending', 'Confirmed')
 
     // Now soft-delete the activity
     db.query(
-      "UPDATE activity SET status = 'Removed' WHERE activity_id = ?",
+      "UPDATE Activity SET status = 'Removed' WHERE activity_id = ?",
       [activity_id],
       (err) => {
         if (err) return res.status(500).json(err)

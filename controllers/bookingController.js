@@ -148,7 +148,7 @@ VALUES(?,?,?,?,?,?,?,?)
                     // UPDATE SLOT CAPACITY
                     // =============================
                     const updateSlot = `
-UPDATE activity_Slot
+UPDATE Activity_Slot
 SET capacity_available = capacity_available - ?
 WHERE slot_id=?
 `
@@ -160,7 +160,7 @@ WHERE slot_id=?
                     // CLOSE SLOT IF FULL
                     // =============================
                     const closeSlot = `
-UPDATE activity_Slot
+UPDATE Activity_Slot
 SET slot_status='Closed'
 WHERE slot_id=? AND capacity_available <= 0
 `
@@ -247,8 +247,8 @@ b.participants_count,
 b.total_amount
 FROM booking b
 JOIN User u ON u.user_id=b.user_id
-JOIN Activity a ON a.activity_id=b.activity_id
-JOIN Activity_Slot s ON s.slot_id=b.slot_id
+JOIN activity a ON a.activity_id=b.activity_id
+JOIN activity_Slot s ON s.slot_id=b.slot_id
 WHERE b.booking_id=?
 `
 
@@ -294,8 +294,8 @@ b.created_at,
 COALESCE(pay.payment_status, 'Paid') AS payment_status
 FROM booking b
 JOIN User u ON u.user_id=b.user_id
-JOIN Activity a ON a.activity_id=b.activity_id
-LEFT JOIN Activity_Slot s ON s.slot_id=b.slot_id
+JOIN activity a ON a.activity_id=b.activity_id
+LEFT JOIN activity_Slot s ON s.slot_id=b.slot_id
 LEFT JOIN Payment pay ON pay.booking_id=b.booking_id
 WHERE b.provider_id=?
 ORDER BY b.created_at DESC
@@ -331,7 +331,7 @@ exports.approveBooking = (req, res) => {
 
         // Insert Notification to user
         const notifySQL = `
-INSERT INTO Notification
+INSERT INTO notification
 (user_id, booking_id, title, message)
 SELECT user_id, booking_id,
 'Booking Confirmed',
@@ -346,8 +346,8 @@ WHERE booking_id=?
 SELECT u.phone, u.full_name, a.title, s.slot_date, s.start_time, b.booking_code
 FROM booking b
 JOIN User u ON u.user_id = b.user_id
-JOIN Activity a ON a.activity_id = b.activity_id
-JOIN Activity_Slot s ON s.slot_id = b.slot_id
+JOIN activity a ON a.activity_id = b.activity_id
+JOIN activity_Slot s ON s.slot_id = b.slot_id
 WHERE b.booking_id = ?
 `
         db.query(getUserSQL, [bookingId], (err, result) => {
@@ -409,7 +409,7 @@ WHERE slot_id = ?
 
             // Notification
             const notifySQL = `
-INSERT INTO Notification
+INSERT INTO notification
 (user_id, booking_id, title, message)
 SELECT user_id, booking_id,
 'Booking Rejected',
@@ -424,7 +424,7 @@ WHERE booking_id=?
 SELECT u.phone, u.full_name, a.title, b.total_amount, b.booking_code
 FROM booking b
 JOIN User u ON u.user_id = b.user_id
-JOIN Activity a ON a.activity_id = b.activity_id
+JOIN activity a ON a.activity_id = b.activity_id
 WHERE b.booking_id = ?
 `
 db.query(getUserSQL, [bookingId], (err, result) => {
@@ -470,9 +470,9 @@ b.activity_id,
 b.provider_id,
 b.slot_id
 FROM booking b
-JOIN Activity a ON a.activity_id = b.activity_id
-JOIN Activity_Slot s ON s.slot_id = b.slot_id
-JOIN Provider p ON p.provider_id = b.provider_id
+JOIN activity a ON a.activity_id = b.activity_id
+JOIN activity_Slot s ON s.slot_id = b.slot_id
+JOIN provider p ON p.provider_id = b.provider_id
 LEFT JOIN Location l ON l.location_id = a.location_id
 LEFT JOIN Review r ON r.booking_id = b.booking_id
 LEFT JOIN Payment pay ON pay.booking_id = b.booking_id
@@ -512,13 +512,13 @@ exports.cancelBooking = (req, res) => {
       db.query(`UPDATE Activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`, [participants_count, slot_id])
 
       // Notify provider via DB notification
-      const notifySQL = `INSERT INTO Notification (provider_id, booking_id, title, message) SELECT provider_id, booking_id, 'Booking Cancelled', 'A user has cancelled their booking' FROM booking WHERE booking_id=?`
+      const notifySQL = `INSERT INTO notification (provider_id, booking_id, title, message) SELECT provider_id, booking_id, 'Booking Cancelled', 'A user has cancelled their booking' FROM booking WHERE booking_id=?`
       db.query(notifySQL, [bookingId])
 
       // SMS to provider
       const getProviderSQL = `
         SELECT p.phone, p.business_name, b.booking_code, a.title
-        FROM booking b JOIN Provider p ON p.provider_id=b.provider_id JOIN Activity a ON a.activity_id=b.activity_id
+        FROM booking b JOIN provider p ON p.provider_id=b.provider_id JOIN activity a ON a.activity_id=b.activity_id
         WHERE b.booking_id=?`
       db.query(getProviderSQL, [bookingId], (e, rows) => {
         if (!e && rows[0]?.phone) {
@@ -555,7 +555,7 @@ exports.completeBooking = (req, res) => {
 
       // Notify user
       const notifySQL = `
-        INSERT INTO Notification (user_id, booking_id, title, message)
+        INSERT INTO notification (user_id, booking_id, title, message)
         SELECT user_id, booking_id, 'Activity Completed', 'Your activity has been marked as completed. Please leave a review!'
         FROM booking WHERE booking_id=?`
       db.query(notifySQL, [bookingId])

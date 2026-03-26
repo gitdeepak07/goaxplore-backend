@@ -101,7 +101,7 @@ exports.registerProvider = (req, res) => {
 
       // FIX: use owner_name not contact_person
       const sql = `
-        INSERT INTO Provider 
+        INSERT INTO provider 
         (business_name, owner_name, email, phone, password_hash, verification_status)
         VALUES (?, ?, ?, ?, ?, 'Pending')
       `

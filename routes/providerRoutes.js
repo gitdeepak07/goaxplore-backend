@@ -18,7 +18,7 @@ router.get("/by-activity/:title", (req, res) => {
       p.address, p.verification_status, p.is_suspended,
       COUNT(a.activity_id) AS total_activities
     FROM provider p
-    INNER JOIN Activity a ON a.provider_id = p.provider_id
+    INNER JOIN activity a ON a.provider_id = p.provider_id
     WHERE a.title = ? AND a.status = 'Active'
     AND p.verification_status = 'Approved' AND p.is_suspended = 0
     GROUP BY p.provider_id
@@ -36,7 +36,7 @@ router.get("/", (req, res) => {
       p.address, p.verification_status, p.is_suspended,
       COUNT(a.activity_id) AS total_activities
     FROM provider p
-    LEFT JOIN Activity a ON a.provider_id = p.provider_id AND a.status = 'Active'
+    LEFT JOIN activity a ON a.provider_id = p.provider_id AND a.status = 'Active'
     WHERE p.verification_status = 'Approved' AND p.is_suspended = 0
     GROUP BY p.provider_id
   `;

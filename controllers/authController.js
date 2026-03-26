@@ -88,7 +88,7 @@ exports.registerUser = async (req, res) => {
 
     const insertResult = await new Promise((resolve, reject) => {
       db.query(
-        "INSERT INTO User(full_name,email,password_hash,phone) VALUES(?,?,?,?)",
+        "INSERT INTO user(full_name,email,password_hash,phone) VALUES(?,?,?,?)",
         [name, email, hash, phone || null],
         (err, result) => {
           if (err) {

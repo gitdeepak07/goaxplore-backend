@@ -5,7 +5,7 @@ exports.createNotification = (req,res)=>{
 const {user_id,booking_id,title,message} = req.body
 
 const sql = `
-INSERT INTO Notification
+INSERT INTO notification
 (user_id,booking_id,title,message)
 VALUES(?,?,?,?)
 `

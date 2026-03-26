@@ -39,7 +39,7 @@ a.average_rating,
 l.location_name,
 l.address
 FROM Wishlist w
-JOIN Activity a ON a.activity_id=w.activity_id
+JOIN activity a ON a.activity_id=w.activity_id
 LEFT JOIN Location l ON l.location_id=a.location_id
 WHERE w.user_id=?
 `

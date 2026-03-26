@@ -7,7 +7,7 @@ exports.createOffer = (req, res) => {
   const activityIdVal = (activity_id && String(activity_id).trim() !== '') ? activity_id : null
   const maxUsageVal   = (max_usage  && String(max_usage).trim()  !== '') ? parseInt(max_usage) : null
 
-  const sql = `INSERT INTO Offer (provider_id, activity_id, offer_name, discount_type, discount_value, valid_from, valid_to, max_usage, description, status)
+  const sql = `INSERT INTO offer (provider_id, activity_id, offer_name, discount_type, discount_value, valid_from, valid_to, max_usage, description, status)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')`
 
   db.query(sql, [provider_id, activityIdVal, offer_name, discount_type || 'percentage', parseFloat(discount_value), valid_from, valid_to, maxUsageVal, description || null], (err, result) => {
@@ -33,8 +33,8 @@ exports.getPublicOffers = (req, res) => {
            p.business_name AS provider_name,
            a.title AS activity_title
     FROM Offer o
-    JOIN Provider p ON p.provider_id = o.provider_id
-    LEFT JOIN Activity a ON a.activity_id = o.activity_id
+    JOIN provider p ON p.provider_id = o.provider_id
+    LEFT JOIN activity a ON a.activity_id = o.activity_id
     WHERE o.status = 'Active'
       AND p.verification_status = 'Approved'
       AND p.is_suspended = 0

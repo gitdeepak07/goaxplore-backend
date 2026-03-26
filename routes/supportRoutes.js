@@ -19,7 +19,7 @@ router.post("/", (req, res) => {
 // Get tickets for user
 router.get("/user/:user_id", (req, res) => {
   db.query(
-    `SELECT t.*, p.business_name AS provider_name FROM SupportTicket t LEFT JOIN Provider p ON p.provider_id=t.provider_id WHERE t.user_id=? ORDER BY t.created_at DESC`,
+    `SELECT t.*, p.business_name AS provider_name FROM SupportTicket t LEFT JOIN provider p ON p.provider_id=t.provider_id WHERE t.user_id=? ORDER BY t.created_at DESC`,
     [req.params.user_id],
     (err, result) => {
       if (err) return res.status(500).json({ message: err.message })
@@ -43,7 +43,7 @@ router.get("/provider/:provider_id", (req, res) => {
 // Get all tickets for admin
 router.get("/admin/all", (req, res) => {
   db.query(
-    `SELECT t.*, u.full_name AS user_name, u.email AS user_email, p.business_name AS provider_name FROM SupportTicket t JOIN User u ON u.user_id=t.user_id LEFT JOIN Provider p ON p.provider_id=t.provider_id ORDER BY t.created_at DESC`,
+    `SELECT t.*, u.full_name AS user_name, u.email AS user_email, p.business_name AS provider_name FROM SupportTicket t JOIN User u ON u.user_id=t.user_id LEFT JOIN provider p ON p.provider_id=t.provider_id ORDER BY t.created_at DESC`,
     (err, result) => {
       if (err) return res.status(500).json({ message: err.message })
       res.json(result)
@@ -61,7 +61,7 @@ router.post("/:ticket_id/reply", (req, res) => {
     (err) => {
       if (err) return res.status(500).json({ message: err.message })
       // Notify user
-      db.query(`INSERT INTO Notification (user_id, title, message) SELECT user_id, 'Support Reply', ? FROM SupportTicket WHERE ticket_id=?`, [reply, ticket_id])
+      db.query(`INSERT INTO notification (user_id, title, message) SELECT user_id, 'Support Reply', ? FROM SupportTicket WHERE ticket_id=?`, [reply, ticket_id])
       res.json({ success: true, message: "Reply sent" })
     }
   )

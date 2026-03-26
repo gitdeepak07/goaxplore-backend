@@ -28,7 +28,7 @@ exports.approveProvider = (req, res) => {
   db.query(`UPDATE Provider SET verification_status = 'Approved' WHERE provider_id = ?`, [id], (err) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, message: "Provider approved successfully" });
-    db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Approved', 'Congratulations! Your GoaXplore provider account has been approved. You can now list activities.')`, [id]);
+    db.query(`INSERT INTO notification (provider_id, title, message) VALUES (?, 'Account Approved', 'Congratulations! Your GoaXplore provider account has been approved. You can now list activities.')`, [id]);
     db.query(`SELECT phone, business_name FROM provider WHERE provider_id = ?`, [id], (e, rows) => {
       if (!e && rows[0]?.phone) notifyProviderApproved(rows[0].phone, rows[0].business_name);
     });
@@ -43,7 +43,7 @@ exports.rejectProvider = (req, res) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, message: "Provider rejected successfully" });
     const msg = reason || 'Your account application was not approved.';
-    db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Rejected', ?)`, [id, msg]);
+    db.query(`INSERT INTO notification (provider_id, title, message) VALUES (?, 'Account Rejected', ?)`, [id, msg]);
     db.query(`SELECT phone, business_name FROM provider WHERE provider_id = ?`, [id], (e, rows) => {
       if (!e && rows[0]?.phone) notifyProviderRejected(rows[0].phone, rows[0].business_name, reason);
     });
@@ -56,7 +56,7 @@ exports.suspendProvider = (req, res) => {
   db.query("UPDATE Provider SET is_suspended = 1 WHERE provider_id = ?", [id], (err) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, message: "Provider suspended successfully" });
-    db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Suspended', 'Your GoaXplore provider account has been suspended. Please contact support@goaxplore.com.')`, [id]);
+    db.query(`INSERT INTO notification (provider_id, title, message) VALUES (?, 'Account Suspended', 'Your GoaXplore provider account has been suspended. Please contact support@goaxplore.com.')`, [id]);
     db.query(`SELECT phone, business_name FROM provider WHERE provider_id = ?`, [id], (e, rows) => {
       if (!e && rows[0]?.phone) notifyProviderSuspended(rows[0].phone, rows[0].business_name);
     });
@@ -69,7 +69,7 @@ exports.unsuspendProvider = (req, res) => {
   db.query("UPDATE Provider SET is_suspended = 0 WHERE provider_id = ?", [id], (err) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, message: "Provider unsuspended successfully" });
-    db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Reactivated', 'Your GoaXplore provider account has been reactivated.')`, [id]);
+    db.query(`INSERT INTO notification (provider_id, title, message) VALUES (?, 'Account Reactivated', 'Your GoaXplore provider account has been reactivated.')`, [id]);
   });
 };
 

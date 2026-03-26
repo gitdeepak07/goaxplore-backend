@@ -20,10 +20,10 @@ exports.createReview = (req, res) => {
 
           const updateRating = `
 UPDATE Activity a
-JOIN Booking b ON b.activity_id = a.activity_id
+JOIN booking b ON b.activity_id = a.activity_id
 SET a.average_rating = (
   SELECT AVG(r2.rating) FROM review r2
-  JOIN Booking b2 ON b2.booking_id = r2.booking_id
+  JOIN booking b2 ON b2.booking_id = r2.booking_id
   WHERE b2.activity_id = a.activity_id
 )
 WHERE b.booking_id = ?`
@@ -40,7 +40,7 @@ exports.getActivityReviews = (req, res) => {
   const sql = `
 SELECT r.review_id, r.rating, r.comment, r.created_at, u.full_name
 FROM review r
-JOIN Booking b ON b.booking_id = r.booking_id
+JOIN booking b ON b.booking_id = r.booking_id
 JOIN User u ON u.user_id = b.user_id
 WHERE b.activity_id = ?
 ORDER BY r.created_at DESC`
@@ -62,9 +62,9 @@ SELECT
   u.full_name,
   a.title AS activity_name
 FROM review r
-JOIN Booking b ON b.booking_id = r.booking_id
+JOIN booking b ON b.booking_id = r.booking_id
 JOIN User u ON u.user_id = b.user_id
-JOIN Activity a ON a.activity_id = b.activity_id
+JOIN activity a ON a.activity_id = b.activity_id
 WHERE b.provider_id = ?
 ORDER BY r.created_at DESC`
   db.query(sql, [provider_id], (err, result) => {
@@ -81,7 +81,7 @@ SELECT
   COUNT(r.review_id)    AS review_count,
   ROUND(AVG(r.rating), 1) AS average_rating
 FROM review r
-JOIN Booking b ON b.booking_id = r.booking_id
+JOIN booking b ON b.booking_id = r.booking_id
 WHERE b.provider_id = ?`
   db.query(sql, [provider_id], (err, result) => {
     if (err) return res.status(500).json(err)
@@ -101,9 +101,9 @@ SELECT
   a.title AS activity_name,
   p.business_name AS provider_name
 FROM review r
-JOIN Booking b ON b.booking_id = r.booking_id
-JOIN Activity a ON a.activity_id = b.activity_id
-JOIN Provider p ON p.provider_id = b.provider_id
+JOIN booking b ON b.booking_id = r.booking_id
+JOIN activity a ON a.activity_id = b.activity_id
+JOIN provider p ON p.provider_id = b.provider_id
 WHERE b.user_id = ?
 ORDER BY r.created_at DESC
 `
@@ -126,7 +126,7 @@ UNION ALL
 (
   SELECT r.review_id, u.full_name, r.rating, r.comment, r.created_at
   FROM review r
-  JOIN Booking b ON b.booking_id = r.booking_id
+  JOIN booking b ON b.booking_id = r.booking_id
   JOIN User u ON u.user_id = b.user_id
   WHERE r.is_site_review IS NULL OR r.is_site_review = 0
 )

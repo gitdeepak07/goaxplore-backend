@@ -40,7 +40,7 @@ router.get("/", (req, res) => {
 // CREATE ACTIVITY
 router.post("/", activityController.createActivity)
 
-// UPDATE ACTIVITY
+// UPDATE Activity
 router.patch("/:activity_id", activityController.updateActivity)
 
 // DELETE ACTIVITY — must be before /:activity_id
