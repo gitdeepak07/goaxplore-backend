@@ -16,7 +16,7 @@ exports.loginAdmin = (req, res) => {
 
 /* ================= GET ALL PROVIDERS ================= */
 exports.getAllProviders = (req, res) => {
-  db.query(`SELECT provider_id, business_name, owner_name, email, phone, address, verification_status, is_suspended, created_at FROM Provider ORDER BY created_at DESC`, (err, result) => {
+  db.query(`SELECT provider_id, business_name, owner_name, email, phone, address, verification_status, is_suspended, created_at FROM provider ORDER BY created_at DESC`, (err, result) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, data: result });
   });
@@ -29,7 +29,7 @@ exports.approveProvider = (req, res) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, message: "Provider approved successfully" });
     db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Approved', 'Congratulations! Your GoaXplore provider account has been approved. You can now list activities.')`, [id]);
-    db.query(`SELECT phone, business_name FROM Provider WHERE provider_id = ?`, [id], (e, rows) => {
+    db.query(`SELECT phone, business_name FROM provider WHERE provider_id = ?`, [id], (e, rows) => {
       if (!e && rows[0]?.phone) notifyProviderApproved(rows[0].phone, rows[0].business_name);
     });
   });
@@ -44,7 +44,7 @@ exports.rejectProvider = (req, res) => {
     res.json({ success: true, message: "Provider rejected successfully" });
     const msg = reason || 'Your account application was not approved.';
     db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Rejected', ?)`, [id, msg]);
-    db.query(`SELECT phone, business_name FROM Provider WHERE provider_id = ?`, [id], (e, rows) => {
+    db.query(`SELECT phone, business_name FROM provider WHERE provider_id = ?`, [id], (e, rows) => {
       if (!e && rows[0]?.phone) notifyProviderRejected(rows[0].phone, rows[0].business_name, reason);
     });
   });
@@ -57,7 +57,7 @@ exports.suspendProvider = (req, res) => {
     if (err) return res.status(500).json({ success: false, message: "DB error" });
     res.json({ success: true, message: "Provider suspended successfully" });
     db.query(`INSERT INTO Notification (provider_id, title, message) VALUES (?, 'Account Suspended', 'Your GoaXplore provider account has been suspended. Please contact support@goaxplore.com.')`, [id]);
-    db.query(`SELECT phone, business_name FROM Provider WHERE provider_id = ?`, [id], (e, rows) => {
+    db.query(`SELECT phone, business_name FROM provider WHERE provider_id = ?`, [id], (e, rows) => {
       if (!e && rows[0]?.phone) notifyProviderSuspended(rows[0].phone, rows[0].business_name);
     });
   });
@@ -77,16 +77,16 @@ exports.unsuspendProvider = (req, res) => {
 exports.deleteProvider = async (req, res) => {
   const { id } = req.params;
   try {
-    await db.promise().query(`DELETE FROM Notification WHERE provider_id = ?`, [id]);
-    await db.promise().query(`DELETE n FROM Notification n JOIN Booking b ON b.booking_id = n.booking_id WHERE b.provider_id = ?`, [id]);
-    await db.promise().query(`DELETE r FROM Review r JOIN Booking b ON b.booking_id = r.booking_id WHERE b.provider_id = ?`, [id]);
-    await db.promise().query(`DELETE p FROM Payment p JOIN Booking b ON b.booking_id = p.booking_id WHERE b.provider_id = ?`, [id]);
-    await db.promise().query(`DELETE FROM Booking WHERE provider_id = ?`, [id]);
-    await db.promise().query(`DELETE s FROM Activity_Slot s JOIN Activity a ON a.activity_id = s.activity_id WHERE a.provider_id = ?`, [id]);
-    await db.promise().query(`DELETE w FROM Wishlist w JOIN Activity a ON a.activity_id = w.activity_id WHERE a.provider_id = ?`, [id]);
-    await db.promise().query(`DELETE FROM Activity WHERE provider_id = ?`, [id]);
-    await db.promise().query(`DELETE FROM Offer WHERE provider_id = ?`, [id]);
-    await db.promise().query(`DELETE FROM Provider WHERE provider_id = ?`, [id]);
+    await db.promise().query(`DELETE FROM notification WHERE provider_id = ?`, [id]);
+    await db.promise().query(`DELETE n FROM notification n JOIN booking b ON b.booking_id = n.booking_id WHERE b.provider_id = ?`, [id]);
+    await db.promise().query(`DELETE r FROM review r JOIN booking b ON b.booking_id = r.booking_id WHERE b.provider_id = ?`, [id]);
+    await db.promise().query(`DELETE p FROM payment p JOIN booking b ON b.booking_id = p.booking_id WHERE b.provider_id = ?`, [id]);
+    await db.promise().query(`DELETE FROM booking WHERE provider_id = ?`, [id]);
+    await db.promise().query(`DELETE s FROM acitivty_Slot s JOIN activity a ON a.activity_id = s.activity_id WHERE a.provider_id = ?`, [id]);
+    await db.promise().query(`DELETE w FROM Wishlist w JOIN activity a ON a.activity_id = w.activity_id WHERE a.provider_id = ?`, [id]);
+    await db.promise().query(`DELETE FROM acitivty WHERE provider_id = ?`, [id]);
+    await db.promise().query(`DELETE FROM offer WHERE provider_id = ?`, [id]);
+    await db.promise().query(`DELETE FROM provider WHERE provider_id = ?`, [id]);
     res.json({ success: true, message: "Provider deleted successfully" });
   } catch (err) {
     console.error("Delete provider error:", err.message);

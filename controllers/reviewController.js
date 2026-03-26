@@ -3,12 +3,12 @@ const db = require("../config/db")
 exports.createReview = (req, res) => {
   const { booking_id, rating, comment } = req.body
 
-  db.query("SELECT review_id FROM Review WHERE booking_id = ?", [booking_id], (err, existing) => {
+  db.query("SELECT review_id FROM review WHERE booking_id = ?", [booking_id], (err, existing) => {
     if (err) return res.status(500).json(err)
     if (existing.length > 0) return res.status(400).json({ message: "Already reviewed" })
 
-    // Get user_id from booking so we can link review to user
-    db.query("SELECT user_id FROM Booking WHERE booking_id = ?", [booking_id], (err, bookingRows) => {
+    // Get user_id FROM booking so we can link review to user
+    db.query("SELECT user_id FROM booking WHERE booking_id = ?", [booking_id], (err, bookingRows) => {
       if (err) return res.status(500).json(err)
       const user_id = bookingRows[0]?.user_id || null
 
@@ -22,7 +22,7 @@ exports.createReview = (req, res) => {
 UPDATE Activity a
 JOIN Booking b ON b.activity_id = a.activity_id
 SET a.average_rating = (
-  SELECT AVG(r2.rating) FROM Review r2
+  SELECT AVG(r2.rating) FROM review r2
   JOIN Booking b2 ON b2.booking_id = r2.booking_id
   WHERE b2.activity_id = a.activity_id
 )
@@ -39,7 +39,7 @@ exports.getActivityReviews = (req, res) => {
   const activity_id = req.params.activity_id
   const sql = `
 SELECT r.review_id, r.rating, r.comment, r.created_at, u.full_name
-FROM Review r
+FROM review r
 JOIN Booking b ON b.booking_id = r.booking_id
 JOIN User u ON u.user_id = b.user_id
 WHERE b.activity_id = ?
@@ -61,7 +61,7 @@ SELECT
   r.created_at,
   u.full_name,
   a.title AS activity_name
-FROM Review r
+FROM review r
 JOIN Booking b ON b.booking_id = r.booking_id
 JOIN User u ON u.user_id = b.user_id
 JOIN Activity a ON a.activity_id = b.activity_id
@@ -80,7 +80,7 @@ exports.getProviderRating = (req, res) => {
 SELECT 
   COUNT(r.review_id)    AS review_count,
   ROUND(AVG(r.rating), 1) AS average_rating
-FROM Review r
+FROM review r
 JOIN Booking b ON b.booking_id = r.booking_id
 WHERE b.provider_id = ?`
   db.query(sql, [provider_id], (err, result) => {
@@ -100,7 +100,7 @@ SELECT
   r.created_at,
   a.title AS activity_name,
   p.business_name AS provider_name
-FROM Review r
+FROM review r
 JOIN Booking b ON b.booking_id = r.booking_id
 JOIN Activity a ON a.activity_id = b.activity_id
 JOIN Provider p ON p.provider_id = b.provider_id
@@ -118,14 +118,14 @@ exports.getPublicReviews = (req, res) => {
   const sql = `
 (
   SELECT r.review_id, u.full_name, r.rating, r.comment, r.created_at
-  FROM Review r
+  FROM review r
   JOIN User u ON u.user_id = r.user_id
   WHERE r.is_site_review = 1
 )
 UNION ALL
 (
   SELECT r.review_id, u.full_name, r.rating, r.comment, r.created_at
-  FROM Review r
+  FROM review r
   JOIN Booking b ON b.booking_id = r.booking_id
   JOIN User u ON u.user_id = b.user_id
   WHERE r.is_site_review IS NULL OR r.is_site_review = 0

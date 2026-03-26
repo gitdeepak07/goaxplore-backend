@@ -4,7 +4,7 @@ const db = require("../config/db")
 exports.getLocations = (req, res) => {
   db.query(
     `SELECT location_id, location_name AS name, latitude, longitude, address
-     FROM Location WHERE is_active = 1`,
+     FROM location WHERE is_active = 1`,
     (err, result) => {
       if (err) return res.status(500).json(err)
       res.json(result)
@@ -17,7 +17,7 @@ exports.getLocationById = (req, res) => {
   const { location_id } = req.params
   db.query(
     `SELECT location_id, location_name AS name, latitude, longitude, address
-     FROM Location WHERE location_id = ?`,
+     FROM location WHERE location_id = ?`,
     [location_id],
     (err, result) => {
       if (err) return res.status(500).json(err)

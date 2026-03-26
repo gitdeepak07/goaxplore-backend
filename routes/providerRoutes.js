@@ -17,7 +17,7 @@ router.get("/by-activity/:title", (req, res) => {
     SELECT DISTINCT p.provider_id, p.business_name, p.email, p.phone,
       p.address, p.verification_status, p.is_suspended,
       COUNT(a.activity_id) AS total_activities
-    FROM Provider p
+    FROM provider p
     INNER JOIN Activity a ON a.provider_id = p.provider_id
     WHERE a.title = ? AND a.status = 'Active'
     AND p.verification_status = 'Approved' AND p.is_suspended = 0
@@ -35,7 +35,7 @@ router.get("/", (req, res) => {
     SELECT p.provider_id, p.business_name, p.email, p.phone,
       p.address, p.verification_status, p.is_suspended,
       COUNT(a.activity_id) AS total_activities
-    FROM Provider p
+    FROM provider p
     LEFT JOIN Activity a ON a.provider_id = p.provider_id AND a.status = 'Active'
     WHERE p.verification_status = 'Approved' AND p.is_suspended = 0
     GROUP BY p.provider_id
@@ -52,7 +52,7 @@ router.get("/:provider_id/activities", providerController.getProviderActivities)
 // GET /api/providers/:provider_id/profile — full profile with verification_status
 router.get("/:provider_id/profile", (req, res) => {
   const provider_id = req.params.provider_id;
-  const sql = `SELECT * FROM Provider WHERE provider_id = ?`;
+  const sql = `SELECT * FROM provider WHERE provider_id = ?`;
   db.query(sql, [provider_id], (err, result) => {
     if (err) return res.status(500).json({ message: err.message });
     if (result.length === 0) return res.status(404).json({ message: "Provider not found" });
@@ -67,12 +67,12 @@ router.get("/:provider_id", (req, res) => {
   const providerSql = `
     SELECT provider_id, business_name, email, phone, address,
            verification_status, owner_name
-    FROM Provider
+    FROM provider
     WHERE provider_id = ?
   `;
   const activitiesSql = `
     SELECT activity_id, title, price_per_person, duration_minutes, average_rating
-    FROM Activity
+    FROM acitivty
     WHERE provider_id = ? AND status = 'Active'
   `;
 

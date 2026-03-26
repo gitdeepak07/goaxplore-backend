@@ -26,8 +26,8 @@ router.get("/", (req, res) => {
       l.latitude,
       l.longitude,
       l.address
-    FROM Activity a
-    LEFT JOIN Category c ON a.category_id = c.category_id
+    FROM acitivty a
+    LEFT JOIN category c ON a.category_id = c.category_id
     LEFT JOIN Location l ON a.location_id = l.location_id
     WHERE a.status = 'Active'
   `

@@ -61,7 +61,7 @@ image_url,
 category_id,
 location_id,
 status
-FROM Activity
+FROM acitivty
 WHERE provider_id=? AND status='Active'
 `
 
@@ -87,7 +87,7 @@ exports.registerProvider = (req, res) => {
 
   // Check if email already exists
   db.query(
-    "SELECT provider_id FROM Provider WHERE email = ?",
+    "SELECT provider_id FROM provider WHERE email = ?",
     [email],
     (err, existing) => {
       if (err) return res.status(500).json({ success: false, message: "DB error" })
