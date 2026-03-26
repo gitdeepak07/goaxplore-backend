@@ -296,7 +296,7 @@ FROM booking b
 JOIN user u ON u.user_id=b.user_id
 JOIN activity a ON a.activity_id=b.activity_id
 LEFT JOIN activity_slot s ON s.slot_id=b.slot_id
-LEFT JOIN Payment pay ON pay.booking_id=b.booking_id
+LEFT JOIN payment pay ON pay.booking_id=b.booking_id
 WHERE b.provider_id=?
 ORDER BY b.created_at DESC
 `
@@ -475,7 +475,7 @@ JOIN activity_slot s ON s.slot_id = b.slot_id
 JOIN provider p ON p.provider_id = b.provider_id
 LEFT JOIN location l ON l.location_id = a.location_id
 LEFT JOIN Review r ON r.booking_id = b.booking_id
-LEFT JOIN Payment pay ON pay.booking_id = b.booking_id
+LEFT JOIN payment pay ON pay.booking_id = b.booking_id
 WHERE b.user_id = ?
 ORDER BY b.created_at DESC
 `
