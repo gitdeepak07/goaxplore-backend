@@ -20,7 +20,7 @@ exports.createOffer = (req, res) => {
 }
 
 exports.getProviderOffers = (req, res) => {
-  db.query("SELECT * FROM Offer WHERE provider_id=?", [req.params.provider_id], (err, result) => {
+  db.query("SELECT * FROM offer WHERE provider_id=?", [req.params.provider_id], (err, result) => {
     if (err) return res.status(500).json(err)
     res.json(result)
   })
@@ -32,7 +32,7 @@ exports.getPublicOffers = (req, res) => {
            o.valid_from, o.valid_to, o.description,
            p.business_name AS provider_name,
            a.title AS activity_title
-    FROM Offer o
+    FROM offer o
     JOIN provider p ON p.provider_id = o.provider_id
     LEFT JOIN activity a ON a.activity_id = o.activity_id
     WHERE o.status = 'Active'

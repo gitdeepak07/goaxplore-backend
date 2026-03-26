@@ -30,7 +30,7 @@ router.patch("/:offer_id", (req, res) => {
 })
 
 router.delete("/:offer_id", (req, res) => {
-  db.query(`DELETE FROM Offer WHERE offer_id=?`, [req.params.offer_id], (err) => {
+  db.query(`DELETE FROM offer WHERE offer_id=?`, [req.params.offer_id], (err) => {
     if (err) return res.status(500).json({ message: err.message })
     res.json({ success: true })
   })
