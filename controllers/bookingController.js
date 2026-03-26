@@ -15,7 +15,7 @@ exports.previewBooking = (req, res) => {
 
     const sql = `
 SELECT price_per_person
-FROM acitivty
+FROM activity
 WHERE activity_id=?
 `
 
@@ -72,7 +72,7 @@ exports.createBooking = (req, res) => {
     // =============================
     const checkSlot = `
 SELECT capacity_available
-FROM acitivty_Slot
+FROM activity_Slot
 WHERE slot_id=?
 `
 
@@ -102,7 +102,7 @@ WHERE slot_id=?
         // =============================
         const priceQuery = `
 SELECT price_per_person
-FROM acitivty
+FROM activity
 WHERE activity_id=?
 `
 

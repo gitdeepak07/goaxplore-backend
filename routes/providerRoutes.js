@@ -72,7 +72,7 @@ router.get("/:provider_id", (req, res) => {
   `;
   const activitiesSql = `
     SELECT activity_id, title, price_per_person, duration_minutes, average_rating
-    FROM acitivty
+    FROM activity
     WHERE provider_id = ? AND status = 'Active'
   `;
 

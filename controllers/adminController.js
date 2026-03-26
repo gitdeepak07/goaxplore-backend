@@ -82,9 +82,9 @@ exports.deleteProvider = async (req, res) => {
     await db.promise().query(`DELETE r FROM review r JOIN booking b ON b.booking_id = r.booking_id WHERE b.provider_id = ?`, [id]);
     await db.promise().query(`DELETE p FROM payment p JOIN booking b ON b.booking_id = p.booking_id WHERE b.provider_id = ?`, [id]);
     await db.promise().query(`DELETE FROM booking WHERE provider_id = ?`, [id]);
-    await db.promise().query(`DELETE s FROM acitivty_Slot s JOIN activity a ON a.activity_id = s.activity_id WHERE a.provider_id = ?`, [id]);
+    await db.promise().query(`DELETE s FROM activity_Slot s JOIN activity a ON a.activity_id = s.activity_id WHERE a.provider_id = ?`, [id]);
     await db.promise().query(`DELETE w FROM Wishlist w JOIN activity a ON a.activity_id = w.activity_id WHERE a.provider_id = ?`, [id]);
-    await db.promise().query(`DELETE FROM acitivty WHERE provider_id = ?`, [id]);
+    await db.promise().query(`DELETE FROM activity WHERE provider_id = ?`, [id]);
     await db.promise().query(`DELETE FROM offer WHERE provider_id = ?`, [id]);
     await db.promise().query(`DELETE FROM provider WHERE provider_id = ?`, [id]);
     res.json({ success: true, message: "Provider deleted successfully" });

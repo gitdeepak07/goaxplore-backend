@@ -7,7 +7,7 @@ exports.getProviderActivities = (req, res) => {
 
   const sql = `
 SELECT activity_id,title,description,price_per_person
-FROM acitivty
+FROM activity
 WHERE provider_id=? AND status='Active'
 `
 
@@ -28,7 +28,7 @@ exports.getActivityDetails = (req, res) => {
 
   const sql = `
 SELECT *
-FROM acitivty
+FROM activity
 WHERE activity_id=?
 `
 

@@ -8,7 +8,7 @@ exports.adminStats = async (req, res) => {
   try {
     const [[usersRow]] = await db.promise().query(`SELECT COUNT(*) AS total_users FROM User`);
     const [[providersRow]] = await db.promise().query(`SELECT COUNT(*) AS total_providers FROM provider WHERE verification_status='Approved'`);
-    const [[activitiesRow]] = await db.promise().query(`SELECT COUNT(*) AS total_activities FROM acitivty WHERE status='Active'`);
+    const [[activitiesRow]] = await db.promise().query(`SELECT COUNT(*) AS total_activities FROM activity WHERE status='Active'`);
     const [[bookingsRow]] = await db.promise().query(`SELECT COUNT(*) AS total_bookings FROM booking`);
 
     res.json({
@@ -31,7 +31,7 @@ PROVIDER DASHBOARD
 exports.providerStats = async (req, res) => {
   try {
     const providerId = req.params.id;
-    const [[activities]] = await db.promise().query(`SELECT COUNT(*) AS total_activities FROM acitivty WHERE provider_id = ?`, [providerId]);
+    const [[activities]] = await db.promise().query(`SELECT COUNT(*) AS total_activities FROM activity WHERE provider_id = ?`, [providerId]);
     const [[bookings]] = await db.promise().query(`SELECT COUNT(*) AS total_bookings FROM booking WHERE provider_id = ?`, [providerId]);
     const [[pending]] = await db.promise().query(`SELECT COUNT(*) AS pending_requests FROM booking WHERE provider_id = ? AND booking_status='Pending'`, [providerId]);
     res.json({

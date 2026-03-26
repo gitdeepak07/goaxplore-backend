@@ -61,7 +61,7 @@ image_url,
 category_id,
 location_id,
 status
-FROM acitivty
+FROM activity
 WHERE provider_id=? AND status='Active'
 `
 
