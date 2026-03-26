@@ -148,7 +148,7 @@ VALUES(?,?,?,?,?,?,?,?)
                     // UPDATE SLOT CAPACITY
                     // =============================
                     const updateSlot = `
-UPDATE activity_Slot
+UPDATE activity_slot
 SET capacity_available = capacity_available - ?
 WHERE slot_id=?
 `
@@ -160,7 +160,7 @@ WHERE slot_id=?
                     // CLOSE SLOT IF FULL
                     // =============================
                     const closeSlot = `
-UPDATE activity_Slot
+UPDATE activity_slot
 SET slot_status='Closed'
 WHERE slot_id=? AND capacity_available <= 0
 `
@@ -193,7 +193,7 @@ SELECT p.phone, p.business_name, u.full_name AS customer_name, a.title, s.slot_d
 FROM provider p
 JOIN activity a ON a.provider_id = p.provider_id
 JOIN user u ON u.user_id = ?
-JOIN activity_Slot s ON s.slot_id = ?
+JOIN activity_slot s ON s.slot_id = ?
 WHERE p.provider_id = ?
 `
                     db.query(getProviderPhone, [user_id, slot_id, provider_id], (err, pResult) => {
@@ -248,7 +248,7 @@ b.total_amount
 FROM booking b
 JOIN user u ON u.user_id=b.user_id
 JOIN activity a ON a.activity_id=b.activity_id
-JOIN activity_Slot s ON s.slot_id=b.slot_id
+JOIN activity_slot s ON s.slot_id=b.slot_id
 WHERE b.booking_id=?
 `
 
@@ -295,7 +295,7 @@ COALESCE(pay.payment_status, 'Paid') AS payment_status
 FROM booking b
 JOIN user u ON u.user_id=b.user_id
 JOIN activity a ON a.activity_id=b.activity_id
-LEFT JOIN activity_Slot s ON s.slot_id=b.slot_id
+LEFT JOIN activity_slot s ON s.slot_id=b.slot_id
 LEFT JOIN Payment pay ON pay.booking_id=b.booking_id
 WHERE b.provider_id=?
 ORDER BY b.created_at DESC
@@ -347,7 +347,7 @@ SELECT u.phone, u.full_name, a.title, s.slot_date, s.start_time, b.booking_code
 FROM booking b
 JOIN user u ON u.user_id = b.user_id
 JOIN activity a ON a.activity_id = b.activity_id
-JOIN activity_Slot s ON s.slot_id = b.slot_id
+JOIN activity_slot s ON s.slot_id = b.slot_id
 WHERE b.booking_id = ?
 `
         db.query(getUserSQL, [bookingId], (err, result) => {
@@ -400,7 +400,7 @@ WHERE booking_id = ?
 
             // Restore slot capacity
             const restoreSlot = `
-UPDATE activity_Slot
+UPDATE activity_slot
 SET capacity_available = capacity_available + ?,
     slot_status = 'Open'
 WHERE slot_id = ?
@@ -471,7 +471,7 @@ b.provider_id,
 b.slot_id
 FROM booking b
 JOIN activity a ON a.activity_id = b.activity_id
-JOIN activity_Slot s ON s.slot_id = b.slot_id
+JOIN activity_slot s ON s.slot_id = b.slot_id
 JOIN provider p ON p.provider_id = b.provider_id
 LEFT JOIN location l ON l.location_id = a.location_id
 LEFT JOIN Review r ON r.booking_id = b.booking_id
@@ -509,7 +509,7 @@ exports.cancelBooking = (req, res) => {
       if (err) return res.status(500).json(err)
 
       // Restore slot capacity
-      db.query(`UPDATE activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`, [participants_count, slot_id])
+      db.query(`UPDATE activity_slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`, [participants_count, slot_id])
 
       // Notify provider via DB notification
       const notifySQL = `INSERT INTO notification (provider_id, booking_id, title, message) SELECT provider_id, booking_id, 'Booking Cancelled', 'A user has cancelled their booking' FROM booking WHERE booking_id=?`
@@ -549,7 +549,7 @@ exports.completeBooking = (req, res) => {
 
       // Restore slot capacity so others can book
       db.query(
-        `UPDATE activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`,
+        `UPDATE activity_slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`,
         [participants_count, slot_id]
       )
 

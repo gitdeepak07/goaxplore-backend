@@ -11,7 +11,7 @@ router.patch("/:slot_id", (req, res) => {
   const { slot_id } = req.params
   const { slot_date, start_time, end_time, capacity_total } = req.body
   db.query(
-    `UPDATE activity_Slot SET slot_date=?, start_time=?, end_time=?, capacity_total=?, capacity_available=? WHERE slot_id=?`,
+    `UPDATE activity_slot SET slot_date=?, start_time=?, end_time=?, capacity_total=?, capacity_available=? WHERE slot_id=?`,
     [slot_date, start_time, end_time, capacity_total, capacity_total, slot_id],
     (err) => {
       if (err) return res.status(500).json({ message: err.message })

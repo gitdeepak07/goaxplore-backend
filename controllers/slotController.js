@@ -47,7 +47,7 @@ capacity_total
 } = req.body
 
 const sql = `
-INSERT INTO activity_Slot
+INSERT INTO activity_slot
 (activity_id,slot_date,start_time,end_time,capacity_total,capacity_available,slot_status)
 VALUES(?,?,?,?,?,?, 'Open')
 `
