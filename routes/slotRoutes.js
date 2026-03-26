@@ -23,7 +23,7 @@ router.patch("/:slot_id", (req, res) => {
 // Delete slot
 router.delete("/:slot_id", (req, res) => {
   const { slot_id } = req.params
-  db.query(`DELETE FROM activity_Slot WHERE slot_id=?`, [slot_id], (err) => {
+  db.query(`DELETE FROM activity_slot WHERE slot_id=?`, [slot_id], (err) => {
     if (err) return res.status(500).json({ message: err.message })
     res.json({ success: true, message: "Slot deleted" })
   })

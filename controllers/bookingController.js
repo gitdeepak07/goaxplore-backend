@@ -72,7 +72,7 @@ exports.createBooking = (req, res) => {
     // =============================
     const checkSlot = `
 SELECT capacity_available
-FROM activity_Slot
+FROM activity_slot
 WHERE slot_id=?
 `
 

@@ -17,7 +17,7 @@ SELECT
     WHEN capacity_available <= 0 THEN 'Closed'
     ELSE slot_status
   END AS slot_status
-FROM activity_Slot
+FROM activity_slot
 WHERE activity_id = ?
 AND slot_date >= CURDATE()
 `
