@@ -27,25 +27,23 @@ exports.getProviderOffers = (req, res) => {
 }
 
 exports.getPublicOffers = (req, res) => {
-  const sql = `
-    SELECT o.offer_id, o.offer_name, o.discount_type, o.discount_value,
-           o.valid_from, o.valid_to, o.description,
-           p.business_name AS provider_name,
-           a.title AS activity_title
-    FROM offer o
-    JOIN provider p ON p.provider_id = o.provider_id
-    LEFT JOIN activity a ON a.activity_id = o.activity_id
-    WHERE o.status = 'Active'
-      AND p.verification_status = 'Approved'
-      AND p.is_suspended = 0
-      AND (o.valid_to IS NULL OR o.valid_to >= CURDATE())
-    ORDER BY o.created_at DESC LIMIT 10
-  `;
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.error('getPublicOffers error:', err.message)
-      return res.status(500).json({ message: err.message })
-    }
-    res.json({ offers: result });
+  db.query("DESCRIBE Offer", (descErr, cols) => {
+    if (descErr) return res.status(500).json({ message: descErr.message });
+    const colNames = cols.map(c => c.Field);
+    let where = `p.verification_status = 'Approved' AND p.is_suspended = 0`;
+    if (colNames.includes('status'))   where += ` AND o.status = 'Active'`;
+    if (colNames.includes('valid_to')) where += ` AND (o.valid_to IS NULL OR o.valid_to >= CURDATE())`;
+    const sql = `
+      SELECT o.*, p.business_name AS provider_name, a.title AS activity_title
+      FROM Offer o
+      JOIN provider p ON p.provider_id = o.provider_id
+      LEFT JOIN activity a ON a.activity_id = o.activity_id
+      WHERE ${where}
+      ORDER BY o.created_at DESC LIMIT 10
+    `;
+    db.query(sql, (err, result) => {
+      if (err) { console.error('getPublicOffers error:', err.message); return res.status(500).json({ message: err.message }); }
+      res.json({ offers: result });
+    });
   });
 };

@@ -7,7 +7,7 @@ router.post("/", (req, res) => {
   const { name, email, subject, message } = req.body
   if (!name || !email || !message) return res.status(400).json({ message: "Missing fields" })
   db.query(
-    `INSERT INTO ContactMessage (name, email, subject, message) VALUES (?,?,?,?)`,
+    `INSERT INTO contactmessage (name, email, subject, message) VALUES (?,?,?,?)`,
     [name, email, subject || '', message],
     (err, result) => {
       if (err) return res.status(500).json({ message: err.message })
@@ -18,7 +18,7 @@ router.post("/", (req, res) => {
 
 // Admin gets all contact messages
 router.get("/admin/all", (req, res) => {
-  db.query(`SELECT * FROM ContactMessage ORDER BY created_at DESC`, (err, result) => {
+  db.query(`SELECT * FROM contactmessage ORDER BY created_at DESC`, (err, result) => {
     if (err) return res.status(500).json({ message: err.message })
     res.json(result)
   })
@@ -28,7 +28,7 @@ router.get("/admin/all", (req, res) => {
 router.post("/:message_id/reply", (req, res) => {
   const { reply } = req.body
   db.query(
-    `UPDATE ContactMessage SET admin_reply=?, replied_at=NOW(), status='replied' WHERE message_id=?`,
+    `UPDATE contactmessage SET admin_reply=?, replied_at=NOW(), status='replied' WHERE message_id=?`,
     [reply, req.params.message_id],
     (err) => {
       if (err) return res.status(500).json({ message: err.message })
