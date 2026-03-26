@@ -26,8 +26,6 @@ const app = express();
 console.log("Starting GoaXplore backend...");
 
 // CORS
-const cors = require("cors");
-
 app.use(cors({
   origin: true,
   credentials: true
