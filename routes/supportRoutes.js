@@ -31,7 +31,7 @@ router.get("/user/:user_id", (req, res) => {
 // Get tickets for provider
 router.get("/provider/:provider_id", (req, res) => {
   db.query(
-    `SELECT t.*, u.full_name AS user_name FROM supportticket t JOIN User u ON u.user_id=t.user_id WHERE t.provider_id=? ORDER BY t.created_at DESC`,
+    `SELECT t.*, u.full_name AS user_name FROM supportticket t JOIN user u ON u.user_id=t.user_id WHERE t.provider_id=? ORDER BY t.created_at DESC`,
     [req.params.provider_id],
     (err, result) => {
       if (err) return res.status(500).json({ message: err.message })
@@ -43,7 +43,7 @@ router.get("/provider/:provider_id", (req, res) => {
 // Get all tickets for admin
 router.get("/admin/all", (req, res) => {
   db.query(
-    `SELECT t.*, u.full_name AS user_name, u.email AS user_email, p.business_name AS provider_name FROM supportticket t JOIN User u ON u.user_id=t.user_id LEFT JOIN provider p ON p.provider_id=t.provider_id ORDER BY t.created_at DESC`,
+    `SELECT t.*, u.full_name AS user_name, u.email AS user_email, p.business_name AS provider_name FROM supportticket t JOIN user u ON u.user_id=t.user_id LEFT JOIN provider p ON p.provider_id=t.provider_id ORDER BY t.created_at DESC`,
     (err, result) => {
       if (err) return res.status(500).json({ message: err.message })
       res.json(result)

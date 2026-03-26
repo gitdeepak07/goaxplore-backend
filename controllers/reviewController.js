@@ -41,7 +41,7 @@ exports.getActivityReviews = (req, res) => {
 SELECT r.review_id, r.rating, r.comment, r.created_at, u.full_name
 FROM review r
 JOIN booking b ON b.booking_id = r.booking_id
-JOIN User u ON u.user_id = b.user_id
+JOIN user u ON u.user_id = b.user_id
 WHERE b.activity_id = ?
 ORDER BY r.created_at DESC`
   db.query(sql, [activity_id], (err, result) => {
@@ -63,7 +63,7 @@ SELECT
   a.title AS activity_name
 FROM review r
 JOIN booking b ON b.booking_id = r.booking_id
-JOIN User u ON u.user_id = b.user_id
+JOIN user u ON u.user_id = b.user_id
 JOIN activity a ON a.activity_id = b.activity_id
 WHERE b.provider_id = ?
 ORDER BY r.created_at DESC`
@@ -119,7 +119,7 @@ exports.getPublicReviews = (req, res) => {
 (
   SELECT r.review_id, u.full_name, r.rating, r.comment, r.created_at
   FROM review r
-  JOIN User u ON u.user_id = r.user_id
+  JOIN user u ON u.user_id = r.user_id
   WHERE r.is_site_review = 1
 )
 UNION ALL
@@ -127,7 +127,7 @@ UNION ALL
   SELECT r.review_id, u.full_name, r.rating, r.comment, r.created_at
   FROM review r
   JOIN booking b ON b.booking_id = r.booking_id
-  JOIN User u ON u.user_id = b.user_id
+  JOIN user u ON u.user_id = b.user_id
   WHERE r.is_site_review IS NULL OR r.is_site_review = 0
 )
 ORDER BY created_at DESC

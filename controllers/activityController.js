@@ -117,7 +117,7 @@ WHERE activity_id = ? AND booking_status IN ('Pending', 'Confirmed')
         const getAffectedUsers = `
 SELECT u.phone, u.full_name, b.booking_code, a.title, b.total_amount
 FROM booking b
-JOIN User u ON u.user_id = b.user_id
+JOIN user u ON u.user_id = b.user_id
 JOIN activity a ON a.activity_id = b.activity_id
 WHERE b.activity_id = ? AND b.booking_status IN ('Pending', 'Confirmed')
 `

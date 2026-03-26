@@ -192,7 +192,7 @@ WHERE u.user_id = ?
 SELECT p.phone, p.business_name, u.full_name AS customer_name, a.title, s.slot_date
 FROM provider p
 JOIN activity a ON a.provider_id = p.provider_id
-JOIN User u ON u.user_id = ?
+JOIN user u ON u.user_id = ?
 JOIN activity_Slot s ON s.slot_id = ?
 WHERE p.provider_id = ?
 `
@@ -246,7 +246,7 @@ s.start_time,
 b.participants_count,
 b.total_amount
 FROM booking b
-JOIN User u ON u.user_id=b.user_id
+JOIN user u ON u.user_id=b.user_id
 JOIN activity a ON a.activity_id=b.activity_id
 JOIN activity_Slot s ON s.slot_id=b.slot_id
 WHERE b.booking_id=?
@@ -293,7 +293,7 @@ b.booking_status,
 b.created_at,
 COALESCE(pay.payment_status, 'Paid') AS payment_status
 FROM booking b
-JOIN User u ON u.user_id=b.user_id
+JOIN user u ON u.user_id=b.user_id
 JOIN activity a ON a.activity_id=b.activity_id
 LEFT JOIN activity_Slot s ON s.slot_id=b.slot_id
 LEFT JOIN Payment pay ON pay.booking_id=b.booking_id
@@ -345,7 +345,7 @@ WHERE booking_id=?
         const getUserSQL = `
 SELECT u.phone, u.full_name, a.title, s.slot_date, s.start_time, b.booking_code
 FROM booking b
-JOIN User u ON u.user_id = b.user_id
+JOIN user u ON u.user_id = b.user_id
 JOIN activity a ON a.activity_id = b.activity_id
 JOIN activity_Slot s ON s.slot_id = b.slot_id
 WHERE b.booking_id = ?
@@ -423,7 +423,7 @@ WHERE booking_id=?
             const getUserSQL = `
 SELECT u.phone, u.full_name, a.title, b.total_amount, b.booking_code
 FROM booking b
-JOIN User u ON u.user_id = b.user_id
+JOIN user u ON u.user_id = b.user_id
 JOIN activity a ON a.activity_id = b.activity_id
 WHERE b.booking_id = ?
 `
