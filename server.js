@@ -27,7 +27,10 @@ console.log("Starting GoaXplore backend...");
 
 // CORS
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: [
+    "https://goaxplore-frontend.vercel.app",
+    "https://goaxplore-frontend-kdal1fz9e-gitdeepak07s-projects.vercel.app"
+  ],
   credentials: true
 }));
 
