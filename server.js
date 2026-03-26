@@ -26,11 +26,10 @@ const app = express();
 console.log("Starting GoaXplore backend...");
 
 // CORS
+const cors = require("cors");
+
 app.use(cors({
-  origin: [
-    "https://goaxplore-frontend.vercel.app",
-    "https://goaxplore-frontend-kdal1fz9e-gitdeepak07s-projects.vercel.app"
-  ],
+  origin: true,
   credentials: true
 }));
 
