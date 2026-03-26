@@ -87,7 +87,7 @@ router.get("/:provider_id", (req, res) => {
   });
 });
 
-// Update Provider Info
+// UPDATE provider Info
 
 router.put("/:provider_id/profile", providerController.updateProviderProfile);
 
@@ -96,12 +96,12 @@ router.patch("/:provider_id", (req, res) => {
   const { business_name, phone, address, description } = req.body
 
   db.query(
-    `UPDATE Provider SET business_name=?, phone=?, address=? WHERE provider_id=?`,
+    `UPDATE provider SET business_name=?, phone=?, address=? WHERE provider_id=?`,
     [business_name, phone, address, provider_id],
     (err) => {
       if (err) return res.status(500).json({ message: err.message })
       if (description !== undefined) {
-        db.query(`UPDATE Provider SET description=? WHERE provider_id=?`, [description, provider_id], () => {})
+        db.query(`UPDATE provider SET description=? WHERE provider_id=?`, [description, provider_id], () => {})
       }
       res.json({ success: true, message: "Profile updated" })
     }

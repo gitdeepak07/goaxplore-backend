@@ -52,7 +52,7 @@ exports.verifyPayment = async (req, res) => {
     }
 
     const sql = `
-      INSERT INTO Payment (booking_id, payment_mode, payment_status, amount_paid, cashfree_order_id, paid_at)
+      INSERT INTO payment (booking_id, payment_mode, payment_status, amount_paid, cashfree_order_id, paid_at)
       VALUES (?, 'cashfree', 'Paid', ?, ?, NOW())
     `;
 
@@ -63,7 +63,7 @@ exports.verifyPayment = async (req, res) => {
 
       // Link payment to booking + auto confirm
       db.query(
-        `UPDATE Booking 
+        `UPDATE booking 
          SET payment_id = ?, payment_gateway = 'cashfree', booking_status = 'pending', updated_at = NOW()
          WHERE booking_id = ?`,
         [payment_id, booking_id],

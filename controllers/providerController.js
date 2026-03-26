@@ -130,18 +130,18 @@ exports.registerProvider = (req, res) => {
 }
 
 
-// update Provider Profille
+// UPDATE provider Profille
 
 exports.updateProviderProfile = (req, res) => {
   const provider_id = req.params.provider_id;
   const { business_name, phone, address, description } = req.body;
   db.query(
-    `UPDATE Provider SET business_name=?, phone=?, address=? WHERE provider_id=?`,
+    `UPDATE provider SET business_name=?, phone=?, address=? WHERE provider_id=?`,
     [business_name, phone || null, address || null, provider_id],
     (err) => {
       if (err) return res.status(500).json({ success: false, message: err.message });
       if (description !== undefined) {
-        db.query(`UPDATE Provider SET description=? WHERE provider_id=?`, [description, provider_id], () => {});
+        db.query(`UPDATE provider SET description=? WHERE provider_id=?`, [description, provider_id], () => {});
       }
       res.json({ success: true, message: "Profile updated successfully" });
     }

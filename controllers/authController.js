@@ -59,7 +59,7 @@ exports.registerUser = async (req, res) => {
 
       await new Promise((resolve, reject) => {
         db.query(
-          "UPDATE User SET full_name=?, password_hash=? WHERE user_id=?",
+          "UPDATE user SET full_name=?, password_hash=? WHERE user_id=?",
           [name, hash, existingUser.user_id],
           (err) => {
             if (err) {
@@ -192,7 +192,7 @@ exports.changeUserPassword = async (req, res) => {
     const match = await bcrypt.compare(current_password, rows[0].password_hash);
     if (!match) return res.status(401).json({ success: false, message: "Current password is incorrect" });
     const hash = await bcrypt.hash(new_password, 10);
-    db.query("UPDATE User SET password_hash=? WHERE user_id=?", [hash, user_id], (err2) => {
+    db.query("UPDATE user SET password_hash=? WHERE user_id=?", [hash, user_id], (err2) => {
       if (err2) return res.status(500).json({ success: false, message: "Failed to update password" });
       res.json({ success: true, message: "Password changed successfully" });
     });

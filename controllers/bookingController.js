@@ -148,7 +148,7 @@ VALUES(?,?,?,?,?,?,?,?)
                     // UPDATE SLOT CAPACITY
                     // =============================
                     const updateSlot = `
-UPDATE Activity_Slot
+UPDATE activity_Slot
 SET capacity_available = capacity_available - ?
 WHERE slot_id=?
 `
@@ -160,7 +160,7 @@ WHERE slot_id=?
                     // CLOSE SLOT IF FULL
                     // =============================
                     const closeSlot = `
-UPDATE Activity_Slot
+UPDATE activity_Slot
 SET slot_status='Closed'
 WHERE slot_id=? AND capacity_available <= 0
 `
@@ -323,7 +323,7 @@ exports.approveBooking = (req, res) => {
 
     const bookingId = req.params.id
 
-    const sql = `UPDATE Booking SET booking_status='Confirmed' WHERE booking_id=?`
+    const sql = `UPDATE booking SET booking_status='Confirmed' WHERE booking_id=?`
 
     db.query(sql, [bookingId], (err) => {
 
@@ -390,17 +390,17 @@ WHERE booking_id = ?
         const { slot_id, participants_count } = result[0]
 
         // Reject the booking
-        const rejectSQL = `UPDATE Booking SET booking_status='Rejected' WHERE booking_id=?`
+        const rejectSQL = `UPDATE booking SET booking_status='Rejected' WHERE booking_id=?`
 
         db.query(rejectSQL, [bookingId], (err) => {
 
             if (err) return res.status(500).json(err)
             // Try to store reason — ignore if column missing
-            db.query(`UPDATE Booking SET provider_decision_note=? WHERE booking_id=?`, [reason, bookingId], () => {})
+            db.query(`UPDATE booking SET provider_decision_note=? WHERE booking_id=?`, [reason, bookingId], () => {})
 
             // Restore slot capacity
             const restoreSlot = `
-UPDATE Activity_Slot
+UPDATE activity_Slot
 SET capacity_available = capacity_available + ?,
     slot_status = 'Open'
 WHERE slot_id = ?
@@ -473,7 +473,7 @@ FROM booking b
 JOIN activity a ON a.activity_id = b.activity_id
 JOIN activity_Slot s ON s.slot_id = b.slot_id
 JOIN provider p ON p.provider_id = b.provider_id
-LEFT JOIN Location l ON l.location_id = a.location_id
+LEFT JOIN location l ON l.location_id = a.location_id
 LEFT JOIN Review r ON r.booking_id = b.booking_id
 LEFT JOIN Payment pay ON pay.booking_id = b.booking_id
 WHERE b.user_id = ?
@@ -504,12 +504,12 @@ exports.cancelBooking = (req, res) => {
       return res.status(400).json({ message: "Cannot cancel this booking" })
     }
 
-    const cancelSQL = `UPDATE Booking SET booking_status='Cancelled' WHERE booking_id=?`
+    const cancelSQL = `UPDATE booking SET booking_status='Cancelled' WHERE booking_id=?`
     db.query(cancelSQL, [bookingId], (err) => {
       if (err) return res.status(500).json(err)
 
       // Restore slot capacity
-      db.query(`UPDATE Activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`, [participants_count, slot_id])
+      db.query(`UPDATE activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`, [participants_count, slot_id])
 
       // Notify provider via DB notification
       const notifySQL = `INSERT INTO notification (provider_id, booking_id, title, message) SELECT provider_id, booking_id, 'Booking Cancelled', 'A user has cancelled their booking' FROM booking WHERE booking_id=?`
@@ -543,13 +543,13 @@ exports.completeBooking = (req, res) => {
 
     const { slot_id, participants_count } = result[0]
 
-    const sql = `UPDATE Booking SET booking_status='Completed' WHERE booking_id=?`
+    const sql = `UPDATE booking SET booking_status='Completed' WHERE booking_id=?`
     db.query(sql, [bookingId], (err) => {
       if (err) return res.status(500).json(err)
 
       // Restore slot capacity so others can book
       db.query(
-        `UPDATE Activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`,
+        `UPDATE activity_Slot SET capacity_available = capacity_available + ?, slot_status='Open' WHERE slot_id=?`,
         [participants_count, slot_id]
       )
 

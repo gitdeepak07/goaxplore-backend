@@ -13,13 +13,13 @@ exports.createReview = (req, res) => {
       const user_id = bookingRows[0]?.user_id || null
 
       db.query(
-        "INSERT INTO Review (booking_id, user_id, rating, comment) VALUES (?, ?, ?, ?)",
+        "INSERT INTO review (booking_id, user_id, rating, comment) VALUES (?, ?, ?, ?)",
         [booking_id, user_id, rating, comment],
         (err, result) => {
           if (err) return res.status(500).json(err)
 
           const updateRating = `
-UPDATE Activity a
+UPDATE activity a
 JOIN booking b ON b.activity_id = a.activity_id
 SET a.average_rating = (
   SELECT AVG(r2.rating) FROM review r2
@@ -142,7 +142,7 @@ LIMIT 10
 exports.createSiteReview = (req, res) => {
   const { user_id, rating, comment } = req.body
   if (!user_id || !comment) return res.status(400).json({ message: 'Missing fields' })
-  const sql = `INSERT INTO Review (user_id, rating, comment, is_site_review) VALUES (?, ?, ?, 1)`
+  const sql = `INSERT INTO review (user_id, rating, comment, is_site_review) VALUES (?, ?, ?, 1)`
   db.query(sql, [user_id, rating || 5, comment], (err, result) => {
     if (err) return res.status(500).json(err)
     res.json({ message: 'Review submitted', review_id: result.insertId })

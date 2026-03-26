@@ -32,7 +32,7 @@ exports.updateLocationCoords = (req, res) => {
   const { latitude, longitude } = req.body
 
   db.query(
-    `UPDATE Location SET latitude = ?, longitude = ? WHERE location_id = ?`,
+    `UPDATE location SET latitude = ?, longitude = ? WHERE location_id = ?`,
     [latitude, longitude, location_id],
     (err) => {
       if (err) return res.status(500).json(err)

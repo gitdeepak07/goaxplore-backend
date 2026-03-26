@@ -20,7 +20,7 @@ router.patch("/:offer_id", (req, res) => {
   const activityIdVal = (activity_id && String(activity_id).trim() !== '') ? activity_id : null
   const maxUsageVal   = (max_usage  && String(max_usage).trim()  !== '') ? parseInt(max_usage) : null
   db.query(
-    `UPDATE Offer SET offer_name=?, discount_type=?, discount_value=?, valid_from=?, valid_to=?, description=?, activity_id=?, max_usage=? WHERE offer_id=?`,
+    `UPDATE offer SET offer_name=?, discount_type=?, discount_value=?, valid_from=?, valid_to=?, description=?, activity_id=?, max_usage=? WHERE offer_id=?`,
     [offer_name, discount_type, parseFloat(discount_value), valid_from, valid_to, description, activityIdVal, maxUsageVal, offer_id],
     (err) => {
       if (err) { console.error('PATCH offer error:', err.message); return res.status(500).json({ message: err.message }) }

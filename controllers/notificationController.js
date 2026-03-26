@@ -52,7 +52,7 @@ exports.markAsRead = (req,res)=>{
 const notification_id = req.params.notification_id
 
 const sql = `
-UPDATE Notification
+UPDATE notification
 SET is_read=TRUE
 WHERE notification_id=?
 `

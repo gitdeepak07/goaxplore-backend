@@ -5,7 +5,7 @@ exports.addToWishlist = (req,res)=>{
 const {user_id,activity_id} = req.body
 
 const sql = `
-INSERT INTO Wishlist
+INSERT INTO wishlist
 (user_id,activity_id)
 VALUES(?,?)
 `
@@ -38,9 +38,9 @@ a.image_url,
 a.average_rating,
 l.location_name,
 l.address
-FROM Wishlist w
+FROM wishlist w
 JOIN activity a ON a.activity_id=w.activity_id
-LEFT JOIN Location l ON l.location_id=a.location_id
+LEFT JOIN location l ON l.location_id=a.location_id
 WHERE w.user_id=?
 `
 
@@ -61,7 +61,7 @@ exports.removeFromWishlist = (req,res)=>{
 const wishlist_id = req.params.wishlist_id
 
 const sql = `
-DELETE FROM Wishlist
+DELETE FROM wishlist
 WHERE wishlist_id=?
 `
 
@@ -72,7 +72,7 @@ return res.status(500).json(err)
 }
 
 res.json({
-message:"Removed from wishlist"
+message:"Removed FROM wishlist"
 })
 
 })

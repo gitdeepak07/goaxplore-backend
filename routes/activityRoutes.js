@@ -28,7 +28,7 @@ router.get("/", (req, res) => {
       l.address
     FROM activity a
     LEFT JOIN category c ON a.category_id = c.category_id
-    LEFT JOIN Location l ON a.location_id = l.location_id
+    LEFT JOIN location l ON a.location_id = l.location_id
     WHERE a.status = 'Active'
   `
   db.query(sql, (err, result) => {
@@ -40,7 +40,7 @@ router.get("/", (req, res) => {
 // CREATE ACTIVITY
 router.post("/", activityController.createActivity)
 
-// UPDATE Activity
+// UPDATE activity
 router.patch("/:activity_id", activityController.updateActivity)
 
 // DELETE ACTIVITY — must be before /:activity_id
