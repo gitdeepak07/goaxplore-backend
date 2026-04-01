@@ -3,14 +3,13 @@ const db = require("../config/db")
 exports.createOffer = (req, res) => {
   const { provider_id, activity_id, offer_name, discount_type, discount_value, valid_from, valid_to, max_usage, description } = req.body
 
-  // Coerce empty string / falsy to null for FK columns
   const activityIdVal = (activity_id && String(activity_id).trim() !== '') ? activity_id : null
   const maxUsageVal   = (max_usage  && String(max_usage).trim()  !== '') ? parseInt(max_usage) : null
 
-  const sql = `INSERT INTO offer (provider_id, activity_id, offer_name, discount_type, discount_value, valid_from, valid_to, max_usage, description, status)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Active')`
+  const sql = `INSERT INTO offer (provider_id, activity_id, offer_name, discount_type, discount_value, valid_from, valid_to, max_usage, description)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
 
-  db.query(sql, [provider_id, activityIdVal, offer_name, discount_type || 'percentage', parseFloat(discount_value), valid_from, valid_to, maxUsageVal, description || null], (err, result) => {
+  db.query(sql, [provider_id, activityIdVal, offer_name, discount_type || 'percentage', parseFloat(discount_value), valid_from || null, valid_to || null, maxUsageVal, description || null], (err, result) => {
     if (err) {
       console.error('createOffer error:', err.message)
       return res.status(500).json({ message: err.message })
@@ -34,12 +33,11 @@ exports.getPublicOffers = (req, res) => {
     LEFT JOIN activity a ON a.activity_id = o.activity_id
     WHERE p.verification_status = 'Approved'
       AND p.is_suspended = 0
-      AND o.status = 'Active'
       AND (o.valid_to IS NULL OR o.valid_to >= CURDATE())
-    ORDER BY o.created_at DESC LIMIT 10
-  `;
+    ORDER BY o.offer_id DESC LIMIT 10
+  `
   db.query(sql, (err, result) => {
-    if (err) { console.error('getPublicOffers error:', err.message); return res.status(500).json({ message: err.message }); }
-    res.json({ offers: result });
-  });
-};
+    if (err) { console.error('getPublicOffers error:', err.message); return res.status(500).json({ message: err.message }) }
+    res.json({ offers: result })
+  })
+}
